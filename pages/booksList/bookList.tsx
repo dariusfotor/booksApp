@@ -2,52 +2,40 @@
 import React, { useState } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Button,
   ActivityIndicator
 } from 'react-native';
 import AddBookModal from '../../modals/AddEdditBooks/add-edit-book-modal';
 import { fetchFunction } from '../../actions/bookList';
-import { useNavigation } from '@react-navigation/native';
 import DeleteBookModal from '../../modals/AddEdditBooks/delete-modal';
 import { BookType } from '../../store/books/types';
 import { useFocusEffect } from '@react-navigation/native';
+import BookComponent from './components/book'
+
 
 const BookListPage = () => {
   const [data, setData] = useState<BookType[]>([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [expandItem, setExpandItem] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchFunction(setData);
 
       return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
       };
     }, [])
   );
-
-  const setExpand = () => {
-    setExpandItem(!expandItem);
-  };
   const renderItem = () => {
     if (data) {
       return data.map((item) => {
         return (
           <BookComponent
             key={item.id}
-            data={data}
-            setExpand={setExpand}
-            setSelectedId={setSelectedId}
             setDeleteModalVisible={setDeleteModalVisible}
-            selectedId={selectedId}
-            setData={setData}
-            expandItem={expandItem}
+            setSelectedId={setSelectedId}
             item={item}
           />
         );
@@ -83,41 +71,6 @@ const BookListPage = () => {
 };
 
 
-const BookComponent = (props: any) => {
-  const navigation = useNavigation();
-  return (
-    <View style={styles.mainContainer}>
-    <View style={styles.itemView} key={props.item.id}>
-      <Text
-        onPress={() => {
-          props.setSelectedId(props.item.id);
-          props.setExpand();
-        }}
-        style={styles.item}
-        key={props.item.id}>
-        {props.item.name}
-      </Text>
-      <View style={props.item.endReadDate === '0000-00-00 00:00:00' ? styles.activeStatus : styles.notActiveStatus}/>
-    </View>
-      {props.expandItem && props.selectedId === props.item.id ? (
-        <View style={styles.expandedItem}>
-          <Text
-            style={styles.viewBtn}
-            onPress={() => {
-              navigation.navigate('BookId', { itemId: props.item.id });
-            }}>
-            Peržiūrėti
-          </Text>
-          <Text
-            onPress={() => props.setDeleteModalVisible(true)}
-            style={styles.deleteBtn}>
-            Ištrinti
-          </Text>
-        </View>
-      ) : null}
-    </View>
-  );
-};
 
 export default BookListPage;
 const styles = StyleSheet.create({

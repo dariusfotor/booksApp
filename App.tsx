@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
 import HomePage from './pages/home/homePage';
 import BooksList from './pages/booksList/bookList';
