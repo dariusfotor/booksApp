@@ -30,10 +30,10 @@ const BookComponent: React.FC<Props> = props => {
               navigation.navigate('BookId', {itemId: props.item.id});
             }}
             title="Peržiūrėti"
-            type="outline"
+            buttonStyle={{backgroundColor: '#1d9127'}}
           />
           <Button
-            buttonStyle={{backgroundColor: 'red'}}
+            buttonStyle={{backgroundColor: '#a83232'}}
             onPress={() => {
               props.setSelectedId(props.item.id);
               props.setDeleteModalVisible(true);

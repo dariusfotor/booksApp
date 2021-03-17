@@ -1,40 +1,34 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import { Alert, Modal, StyleSheet, Text, View, ScrollView } from 'react-native';
+import {Alert, Modal, StyleSheet, Text, View, ScrollView} from 'react-native';
 import Form from './form';
-import { BookType } from '../../store/books/types';
+import { BookType } from '../../store/books/types'
 
 interface Props {
-  book?: BookType[];
+  setCheckDoneModalVisible: (arg: boolean) => void;
+  checkDoneModalVisible: boolean;
+  bookId: number;
   setBook?: (arg: BookType[]) => void;
-  modalVisible: boolean;
-  setModalVisible: (arg: boolean) => void;
-  setData?: (arg: BookType[]) => void;
-  data?: BookType[];
-  bookId?: number;
 }
 
-const AddEditBookModal: React.FC<Props> = (props) => {
+const CheckBookDone: React.FC<Props> = props => {
   return (
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={props.modalVisible}
+        visible={props.checkDoneModalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          props.setModalVisible(!props.modalVisible);
+          props.setCheckDoneModalVisible(!props.checkDoneModalVisible);
         }}>
         <ScrollView>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>
                 <Form
-                  book={props.book}
-                  setData={props.setData}
-                  data={props.data}
-                  setModalVisible={props.setModalVisible}
-                  modalVisible={props.modalVisible}
+                  checkDoneModalVisible={props.checkDoneModalVisible}
+                  setCheckDoneModalVisible={props.setCheckDoneModalVisible}
                   bookId={props.bookId}
                   setBook={props.setBook}
                 />
@@ -80,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddEditBookModal;
+export default CheckBookDone;

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import {
@@ -15,6 +16,7 @@ import * as ImagePicker from 'react-native-image-picker';
 import {BookType} from '../../store/books/types';
 import moment from 'moment';
 import DatePicker from 'react-native-datepicker';
+import {Icon, Slider} from 'react-native-elements';
 
 interface Props {
   book?: BookType[];
@@ -26,7 +28,7 @@ interface Props {
   bookId?: number;
 }
 
-const Form: React.FC<Props> = (props) => {
+const Form: React.FC<Props> = props => {
   return (
     <Formik
       initialValues={
@@ -35,8 +37,8 @@ const Form: React.FC<Props> = (props) => {
               name: '',
               description: '',
               createdAt: new Date(),
-              firstEdition: new Date(),
-              startReadDate: new Date(),
+              firstEdition: null,
+              startReadDate: null,
               endReadDate: null,
               photo: '',
               evaluation: 0,
@@ -50,15 +52,18 @@ const Form: React.FC<Props> = (props) => {
               id: props.book[0].id,
               name: props.book[0].name,
               description: props.book[0].description,
-              firstEdition: moment(props.book[0].firstEdition).format(
-                'YYYY-MM-DD',
-              ),
-              startReadDate: moment(props.book[0].startReadDate).format(
-                'YYYY-MM-DD',
-              ),
-              endReadDate: moment(props.book[0].endReadDate).format(
-                'YYYY-MM-DD',
-              ),
+              firstEdition:
+                props.book[0].firstEdition !== '0000-00-00 00:00:00'
+                  ? moment(props.book[0].firstEdition).format('YYYY-MM-DD')
+                  : null,
+              startReadDate:
+                props.book[0].startReadDate !== '0000-00-00 00:00:00'
+                  ? moment(props.book[0].startReadDate).format('YYYY-MM-DD')
+                  : null,
+              endReadDate:
+                props.book[0].endReadDate !== '0000-00-00 00:00:00'
+                  ? moment(props.book[0].endReadDate).format('YYYY-MM-DD')
+                  : null,
               photo: props.book[0].photo,
               evaluation: props.book[0].evaluation,
               numberOfPages: props.book[0].numberOfPages,
@@ -68,7 +73,7 @@ const Form: React.FC<Props> = (props) => {
               publishHouse: props.book[0].publishHouse,
             }
       }
-      onSubmit={(values) => {
+      onSubmit={values => {
         if (props.book && props.setBook && props.book) {
           props.setBook([values]);
           props.setModalVisible(!props.modalVisible);
@@ -82,7 +87,7 @@ const Form: React.FC<Props> = (props) => {
       {({handleChange, handleBlur, handleSubmit, values, setFieldValue}) => (
         <View>
           <View>
-            <Text>Pavadinimas</Text>
+            <Text style={styles.label}>Pavadinimas</Text>
             <TextInput
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -91,7 +96,7 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Originalus pavadinimas</Text>
+            <Text style={styles.label}>Originalus pavadinimas</Text>
             <TextInput
               onChangeText={handleChange('originalName')}
               onBlur={handleBlur('originalName')}
@@ -100,7 +105,7 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Autorius</Text>
+            <Text style={styles.label}>Autorius</Text>
             <TextInput
               onChangeText={handleChange('author')}
               onBlur={handleBlur('author')}
@@ -109,7 +114,7 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Žanras</Text>
+            <Text style={styles.label}>Žanras</Text>
             <TextInput
               onChangeText={handleChange('genres')}
               onBlur={handleBlur('genres')}
@@ -118,7 +123,7 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Leidykla</Text>
+            <Text style={styles.label}>Leidykla</Text>
             <TextInput
               onChangeText={handleChange('publishHouse')}
               onBlur={handleBlur('publishHouse')}
@@ -127,10 +132,10 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Pirmas leidimas</Text>
+            <Text style={styles.label}>Pirmas leidimas</Text>
             <DatePicker
               style={{width: 200}}
-              date={values.firstEdition}
+              date={values.firstEdition?.toString()}
               mode="date"
               placeholder="pasirinkite datą"
               format="YYYY-MM-DD"
@@ -151,16 +156,18 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Puslapių skaičius</Text>
+            <Text style={styles.label}>Puslapių skaičius</Text>
             <TextInput
               onChangeText={handleChange('numberOfPages')}
               onBlur={handleBlur('numberOfPages')}
-              value={values.numberOfPages.toString()}
+              value={
+                values.numberOfPages ? values.numberOfPages.toString() : ''
+              }
               style={styles.inputs}
             />
           </View>
           <View>
-            <Text>Aprašymas</Text>
+            <Text style={styles.label}>Aprašymas</Text>
             <TextInput
               onChangeText={handleChange('description')}
               onBlur={handleBlur('description')}
@@ -169,10 +176,10 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Pradėta skaityti</Text>
+            <Text style={styles.label}>Pradėta skaityti</Text>
             <DatePicker
               style={{width: 200}}
-              date={values.startReadDate}
+              date={values.startReadDate?.toString()}
               mode="date"
               placeholder="pasirinkite datą"
               format="YYYY-MM-DD"
@@ -193,7 +200,7 @@ const Form: React.FC<Props> = (props) => {
             />
           </View>
           <View>
-            <Text>Pabaigta skaityti</Text>
+            <Text style={styles.label}>Pabaigta skaityti</Text>
             <DatePicker
               style={{width: 200}}
               date={values.endReadDate?.toString()}
@@ -226,8 +233,7 @@ const Form: React.FC<Props> = (props) => {
                     maxHeight: 200,
                     maxWidth: 200,
                   },
-                  (response) => {
-                    console.log(response);
+                  response => {
                     setFieldValue('photo', response);
                   },
                 )
@@ -235,12 +241,36 @@ const Form: React.FC<Props> = (props) => {
               title="Pasirinkti foto"
             />
           </View>
-          <View>
-            <Text>Įvertinimas</Text>
+          <View >
+            <Text style={styles.label}>Įvertinimas</Text>
+            <Slider
+              value={values.evaluation}
+              onValueChange={(e: any) => setFieldValue('evaluation', e)}
+              maximumValue={5}
+              minimumValue={0}
+              step={1}
+              trackStyle={{height: 10, backgroundColor: 'transparent'}}
+              thumbStyle={{
+                height: 20,
+                width: 20,
+                backgroundColor: 'transparent',
+              }}
+              thumbProps={{
+                children: (
+                  <Icon
+                    name="heartbeat"
+                    type="font-awesome"
+                    size={12}
+                    reverse
+                    containerStyle={{bottom: 10, right: 20}}
+                    color="#f50"
+                  />
+                ),
+              }}
+            />
             <TextInput
-              onChangeText={handleChange('evaluation')}
-              onBlur={handleBlur('evaluation')}
-              value={values.evaluation.toString()}
+              editable={false}
+              value={values.evaluation ? values.evaluation.toString() : ''}
               style={styles.inputs}
             />
           </View>
@@ -291,5 +321,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     fontSize: 18,
+  },
+  label: {
+    fontSize: 16,
+    
   },
 });

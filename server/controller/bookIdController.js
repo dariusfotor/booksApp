@@ -24,7 +24,6 @@ exports.getBookById = async (req, res) => {
 };
 
 exports.updateBook = async (req, res) => {
-  // eslint-disable-next-line no-shadow
   connection.getConnection(function (_err) {
     connection.query(
       `UPDATE books SET name="${req.body.name}",
@@ -38,6 +37,23 @@ exports.updateBook = async (req, res) => {
        endReadDate="${req.body.endReadDate}",
        evaluation="${req.body.evaluation}",
        publishHouse="${req.body.publishHouse}",
+       updatedAt="${new Date()}"
+        where id= "${req.params.id}"`,
+      function (error, results) {
+        if (error) {
+          throw error;
+        }
+        res.send(results);
+      },
+    );
+  });
+};
+
+exports.updateBookEndReadDate = async (req, res) => {
+  connection.getConnection(function (_err) {
+    connection.query(
+      `UPDATE books SET 
+       endReadDate="${req.body.endReadDate}",
        updatedAt="${new Date()}"
         where id= "${req.params.id}"`,
       function (error, results) {

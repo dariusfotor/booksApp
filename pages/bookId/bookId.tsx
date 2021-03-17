@@ -1,22 +1,28 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {useRoute, Route} from '@react-navigation/native';
 import {fetchById} from '../../actions/bookId';
 import moment from 'moment';
 import AddEditBookModal from '../../modals/AddEdditBooks/add-edit-book-modal';
+import CheckBookDone from '../../modals/CheckDoneBook/check-done-book-modal';
 import {BookType} from '../../store/books/types';
-import {Card, Button} from 'react-native-elements';
+import {Card, Button, Rating} from 'react-native-elements';
+import {useFocusEffect} from '@react-navigation/native';
 
 const BookId = () => {
   const [book, setBook] = useState<BookType[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [checkDoneModalVisible, setCheckDoneModalVisible] = useState(false);
   const route = useRoute<Route<string, {itemId: number}>>();
-  console.log(route.params);
   const {itemId} = route.params;
-  useEffect(() => {
-    fetchById(setBook, itemId);
-  }, [itemId]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchById(setBook, itemId);
+
+      return () => {};
+    }, [itemId]),
+  );
 
   const renderBook = () => {
     return book.map(x => {
@@ -26,6 +32,13 @@ const BookId = () => {
       return (
         <Card key={x.id}>
           <View style={styles.editButton}>
+            {x.endReadDate === '0000-00-00 00:00:00' ? (
+              <Button
+                onPress={() => setCheckDoneModalVisible(true)}
+                title="Žymėti perskaitytą"
+                type="outline"
+              />
+            ) : null}
             <Button
               onPress={() => setModalVisible(true)}
               title="Redaguoti"
@@ -46,7 +59,13 @@ const BookId = () => {
             Puslapių skaičius: {x.numberOfPages}
           </Text>
           <Text style={styles.paragraph}>Aprašymas: {x.description}</Text>
-          <Text style={styles.paragraph}>Įvertinimas: {x.evaluation}</Text>
+          <Text style={styles.paragraph}>Įvertinimas</Text>
+          <Rating
+            showRating
+            fractions={1}
+            startingValue={x.evaluation}
+          />
+
           <Text style={styles.paragraph}>
             Pradėta skaityti: {moment(x.startReadDate).format('YYYY-MM-DD')}
           </Text>
@@ -72,13 +91,18 @@ const BookId = () => {
     <ScrollView>
       <View>
         {renderBook()}
-
         <AddEditBookModal
           book={book}
           setBook={setBook}
           setModalVisible={setModalVisible}
           modalVisible={modalVisible}
           bookId={itemId}
+        />
+        <CheckBookDone
+          bookId={itemId}
+          setBook={setBook}
+          setCheckDoneModalVisible={setCheckDoneModalVisible}
+          checkDoneModalVisible={checkDoneModalVisible}
         />
       </View>
     </ScrollView>
@@ -95,7 +119,7 @@ const styles = StyleSheet.create({
   editButton: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   name: {
     fontSize: 22,
@@ -108,6 +132,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#34495e',
   },
-  author: {},
-  genres: {},
 });

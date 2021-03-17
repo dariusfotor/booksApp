@@ -1,36 +1,31 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Button,
-  ActivityIndicator
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import AddBookModal from '../../modals/AddEdditBooks/add-edit-book-modal';
-import { fetchFunction } from '../../actions/bookList';
+import {fetchFunction} from '../../actions/bookList';
 import DeleteBookModal from '../../modals/AddEdditBooks/delete-modal';
-import { BookType } from '../../store/books/types';
-import { useFocusEffect } from '@react-navigation/native';
-import BookComponent from './components/book'
-
+import {BookType} from '../../store/books/types';
+import {useFocusEffect} from '@react-navigation/native';
+import BookComponent from './components/book';
+import {Button} from 'react-native-elements';
 
 const BookListPage = () => {
   const [data, setData] = useState<BookType[]>([]);
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  // const [searchValue, setSearchValue] = useState<string>('');
 
   useFocusEffect(
     React.useCallback(() => {
       fetchFunction(setData);
 
-      return () => {
-      };
-    }, [])
+      return () => {};
+    }, []),
   );
   const renderItem = () => {
     if (data) {
-      return data.map((item) => {
+      return data.map(item => {
         return (
           <BookComponent
             key={item.id}
@@ -43,16 +38,18 @@ const BookListPage = () => {
     }
   };
 
-
   return (
     <View style={styles.container}>
       <Button
         onPress={() => setModalVisible(true)}
         title="Pridėti knygą"
-        color="#841584"
-        accessibilityLabel="Learn more about this purple button"
+        buttonStyle={{borderBottomRightRadius: 20, borderTopLeftRadius: 20, margin: 5}}
       />
-      {!data ? <ActivityIndicator size="large" color="#00ff00" /> : renderItem()}
+      {!data ? (
+        <ActivityIndicator size="large" color="#00ff00" />
+      ) : (
+        renderItem()
+      )}
       <AddBookModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -69,8 +66,6 @@ const BookListPage = () => {
     </View>
   );
 };
-
-
 
 export default BookListPage;
 const styles = StyleSheet.create({
@@ -102,7 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2b5181',
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     padding: 5,
   },
   deleteBtn: {
